@@ -1,5 +1,14 @@
 const { authJwt } = require("../middlewares");
 const controller = require("../controllers/notes.controller");
+const { 
+  getAllNotes, 
+  filterByCreatedOrUpdatedDate, 
+  filterByTitle, 
+  filterByStatus, 
+  addNewNote, 
+  editNote, 
+  deleteNote 
+} = require('../controllers/notes.controller');
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -10,11 +19,17 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/notes/all", [authJwt.verifyToken], controller.allNotes);
+  app.get("/api/notes/all", [authJwt.verifyToken], getAllNotes);
 
-  app.post("/api/notes/add", [authJwt.verifyToken], controller.addNewNote);
+  app.get('/api/notes/filter-by-created-date', [authJwt.verifyToken], filterByCreatedOrUpdatedDate);
 
-  app.put('/api/notes/edit/:id', [authJwt.verifyToken], controller.editNote);
+  app.get('/api/notes/filter-by-title', [authJwt.verifyToken], filterByTitle);
 
-  app.delete('/api/notes/delete/:id', [authJwt.verifyToken], controller.deleteNote)
+  app.get('/api/notes/filter-by-status', [authJwt.verifyToken], filterByStatus);
+
+  app.post("/api/notes/add", [authJwt.verifyToken], addNewNote);
+
+  app.put('/api/notes/edit/:id', [authJwt.verifyToken], editNote);
+
+  app.delete('/api/notes/delete/:id', [authJwt.verifyToken], deleteNote)
 };

@@ -1,7 +1,7 @@
 const db = require("../models");
 const Note = db.notes;
 
-exports.allNotes = async (req, res) => {
+exports.getAllNotes = async (req, res) => {
   try {
     const notes = await Note.findAll();
     res.status(200).json(notes);
@@ -70,7 +70,7 @@ exports.filterByTitle = async (req, res) => {
   const { title, filter } = req.query;
 
   try {
-    const notes = await ModelName.findAll({
+    const notes = await Note.findAll({
       where: {
         [title]: {
           [Op.iLike]: `%${filter}%`
@@ -93,7 +93,7 @@ exports.filterByStatus = async (req, res) => {
   const { status, filter } = req.query;
 
   try {
-    const notes = await ModelName.findAll({
+    const notes = await Note.findAll({
       where: {
         [status]: {
           [Op.iLike]: `%${filter}%`
@@ -112,15 +112,16 @@ exports.filterByStatus = async (req, res) => {
   }
 };
 
-exports.filterByCreatedDate = async (req, res) => {
+exports.filterByCreatedOrUpdatedDate = async (req, res) => {
   const { startDate, endDate } = req.query;
 
   try {
-    const notes = await ModelName.findAll({
+    const notes = await Note.findAll({
       where: {
-        [createdAt]: {
-          [Op.between]: [startDate, endDate]
-        }
+        [Op.or]: [
+          { createdAt: { [Op.between]: [startDate, endDate] } },
+          { updatedAt: { [Op.between]: [startDate, endDate] } },
+        ],
       }
     }); 
 
